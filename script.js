@@ -13,10 +13,10 @@ function addProduct(title, category, price, rating, imageSrc) {
             </div>
             <p>Category: ${category}</p>
             <p>Price: ${price} EGP</p>
-            <div class="rating">
+            <div class="rating" id="rating-${productIdCounter}">
                 ${generateStars(rating, productIdCounter)}
-                <span class="rating-text">${rating.toFixed(1)}/5</span>
             </div>
+            <span class="rating-text" id="rating-text-${productIdCounter}" style="color: green;">${rating.toFixed(1)}/5 ${getRatingEmoji(rating)}</span>
         </div>
         <div class="buy-section">
             <span class="times-bought">0 times bought</span>
@@ -38,30 +38,45 @@ function addProduct(title, category, price, rating, imageSrc) {
 }
 
 function generateStars(rating, productId) {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0;
     let starsHTML = "";
     
     for (let i = 0; i < 5; i++) {
-        if (i < fullStars) {
+        if (i < rating) {
             starsHTML += `<img class="star-icon" src="star.png" alt="star" onclick="changeRating(${productId}, ${i + 1})">`;
-        } else if (halfStar && i === fullStars) {
-            starsHTML += `<img class="star-icon" src="half-star.png" alt="half star" onclick="changeRating(${productId}, ${fullStars + 0.5})">`;
         } else {
             starsHTML += `<img class="star-icon" src="empty-star.png" alt="empty star" onclick="changeRating(${productId}, ${i + 1})">`;
         }
     }
-    
     return starsHTML;
 }
 
-
 function changeRating(productId, newRating) {
-    const productDiv = document.getElementById(`product-${productId}`);
-    const ratingDiv = productDiv.querySelector(".rating");
-    const ratingText = productDiv.querySelector(".rating-text");
+    const ratingDiv = document.getElementById(`rating-${productId}`);
+    const ratingText = document.getElementById(`rating-text-${productId}`);
+    
     ratingDiv.innerHTML = generateStars(newRating, productId);
-    ratingText.textContent = `${newRating.toFixed(1)}/5`;
+    ratingText.textContent = `${newRating.toFixed(1)}/5 ${getRatingEmoji(newRating)}`;
+    updateRatingAppearance(newRating, ratingText);
+}
+
+function getRatingEmoji(rating) {
+    if (rating <= 2) {
+        return "😢";
+    } else if (rating === 3) {
+        return "😐";
+    } else if (rating >= 4) {
+        return "😄";
+    }
+}
+
+function updateRatingAppearance(rating, ratingText) {
+    if (rating <= 2) {
+        ratingText.style.color = "red";
+    } else if (rating === 3) {
+        ratingText.style.color = "orange";
+    } else if (rating >= 4) {
+        ratingText.style.color = "green";
+    }
 }
 
 function buyProduct(productId) {
@@ -73,14 +88,14 @@ function buyProduct(productId) {
 }
 
 // Adding products
-addProduct("Smartphone", "Electronics", 5000, 4.5, "smartphone.jpg");
-addProduct("Laptop", "Electronics", 12000, 4.0, "laptop.jpg");
-addProduct("Headphones", "Electronics", 300, 3.5, "headphones.jpg");
+addProduct("Smartphone", "Electronics", 5000, 5, "smartphone.jpg");
+addProduct("Laptop", "Electronics", 12000, 5, "laptop.jpg");
+addProduct("Headphones", "Electronics", 300, 5, "headphones.jpg");
 
-addProduct("T-Shirt", "Clothing", 150, 4.2, "tshirt.jpg");
-addProduct("Jeans", "Clothing", 300, 4.8, "jeans.jpg");
-addProduct("Sneakers", "Clothing", 500, 4.0, "sneakers.jpg");
+addProduct("T-Shirt", "Clothing", 150, 5, "tshirt.jpg");
+addProduct("Jeans", "Clothing", 300, 5, "jeans.jpg");
+addProduct("Sneakers", "Clothing", 500, 5, "sneakers.jpg");
 
-addProduct("Python Crash Course", "Books", 250, 4.7, "python_book.jpg");
-addProduct("To Kill a Mockingbird", "Books", 150, 4.3, "mockingbird.jpg");
-addProduct("The Great Gatsby", "Books", 200, 4.5, "gatsby.jpg");
+addProduct("Python Crash Course", "Books", 250, 5, "python_book.jpg");
+addProduct("To Kill a Mockingbird", "Books", 150, 5, "mockingbird.jpg");
+addProduct("The Great Gatsby", "Books", 200, 5, "gatsby.jpg");
