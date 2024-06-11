@@ -42,9 +42,9 @@ function generateStars(rating, productId) {
     
     for (let i = 0; i < 5; i++) {
         if (i < rating) {
-            starsHTML += `<img class="star-icon" src="star.png" alt="star" onclick="changeRating(${productId}, ${i + 1})">`;
+            starsHTML += `<img class="star-icon" src="stars/star.png" alt="star" onclick="changeRating(${productId}, ${i + 1})">`;
         } else {
-            starsHTML += `<img class="star-icon" src="empty-star.png" alt="empty star" onclick="changeRating(${productId}, ${i + 1})">`;
+            starsHTML += `<img class="star-icon" src="stars/empty-star.png" alt="empty star" onclick="changeRating(${productId}, ${i + 1})">`;
         }
     }
     return starsHTML;
@@ -88,14 +88,23 @@ function buyProduct(productId) {
 }
 
 // Adding products
-addProduct("Smartphone", "Electronics", 5000, 5, "smartphone.jpg");
-addProduct("Laptop", "Electronics", 12000, 5, "laptop.jpg");
-addProduct("Headphones", "Electronics", 300, 5, "headphones.jpg");
+addProduct("Smartphone", "Electronics", 5000, 5, "images/smartphone.jpg");
+addProduct("Laptop", "Electronics", 12000, 5, "images/laptop.jpg");
+addProduct("Headphones", "Electronics", 300, 5, "images/headphones.jpg");
+addProduct("PS5", "Electronics", 30000, 5, "images/PS5.jpg");
+addProduct("TV", "Electronics", 11000, 5, "images/TV.jpg");
+addProduct("SmartWatch", "Electronics", 7799, 5, "images/SmartWatch.jpg");
 
-addProduct("T-Shirt", "Clothing", 150, 5, "tshirt.jpg");
-addProduct("Jeans", "Clothing", 300, 5, "jeans.jpg");
-addProduct("Sneakers", "Clothing", 500, 5, "sneakers.jpg");
+addProduct("T-Shirt", "Clothing", 150, 5, "images/tshirt.jpg");
+addProduct("Jeans", "Clothing", 300, 5, "images/jeans.jpg");
+addProduct("Hoodie", "Clothing", 700, 5, "images/hoodie.jpg");
+addProduct("Sneakers", "Clothing", 500, 5, "images/sneakers.jpg");
+addProduct("Short", "Clothing", 490, 5, "images/Short.jpg");
+addProduct("Jacket", "Clothing", 450, 5, "images/Jacket.jpg");
 
-addProduct("Python Crash Course", "Books", 250, 5, "python_book.jpg");
-addProduct("To Kill a Mockingbird", "Books", 150, 5, "mockingbird.jpg");
-addProduct("The Great Gatsby", "Books", 200, 5, "gatsby.jpg");
+addProduct("Python Crash Course", "Books", 250, 5, "images/python_book.jpg");
+addProduct("To Kill a Mockingbird", "Books", 150, 5, "images/mockingbird.jpg");
+addProduct("The Great Gatsby", "Books", 200, 5, "images/gatsby.jpg");
+addProduct("Diary of a Wimpy kid", "Books", 400, 5, "images/Wimpy.jpg");
+addProduct("Peter Pan", "Books", 450, 5, "images/Peter.jpg");
+addProduct("William Shakespeare Tragedies", "Books", 1000, 5, "images/Tragedies.jpg");
