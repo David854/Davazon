@@ -87,7 +87,6 @@ function buyProduct(productId) {
     boughtCounter.textContent = `${timesBought} times bought`;
 }
 
-// Adding products
 addProduct("Smartphone", "Electronics", 5000, 5, "images/smartphone.jpg");
 addProduct("Laptop", "Electronics", 12000, 5, "images/laptop.jpg");
 addProduct("Headphones", "Electronics", 300, 5, "images/headphones.jpg");
