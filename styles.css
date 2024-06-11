@@ -40,6 +40,7 @@ h2 {
 
 .container {
     max-width: 800px;
+    margin: 0 auto;
 }
 
 .products {
@@ -127,4 +128,55 @@ h2 {
 
 .info-bottom {
     margin-top: auto;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+    header {
+        padding: 10px;
+    }
+
+    nav ul li {
+        display: block;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    section {
+        padding: 5px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .product {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 5px;
+    }
+
+    .product .product-info > * {
+        margin-bottom: 3px;
+    }
+
+    .product .buy-button {
+        padding: 5px;
+        font-size: 12px;
+        bottom: 5px;
+        right: 5px;
+    }
+
+    .star-icon {
+        width: 12px;
+        margin-right: 2px;
+    }
+
+    .product .product-info p {
+        font-size: 14px;
+    }
 }
