@@ -1,109 +1,206 @@
-let productIdCounter = 1;
+// Davazon deluxe cart + toast + sidebar + smooth scroll + in-view cards
 
-function addProduct(title, category, price, rating, imageSrc) {
-    const productDiv = document.createElement("div");
-    productDiv.classList.add("product");
-    productDiv.id = `product-${productIdCounter}`;
+// Elements
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const closeSidebar = document.getElementById('closeSidebar');
+const overlay = document.getElementById('overlay');
 
-    productDiv.innerHTML = `
-        <div class="product-info">
-            <h3>${title}</h3>
-            <div class="product-image-container">
-                <img src="${imageSrc}" alt="${title}" class="product-image">
-            </div>
-            <p>Category: ${category}</p>
-            <p>Price: ${price} EGP</p>
-            <div class="rating" id="rating-${productIdCounter}">
-                ${generateStars(rating, productIdCounter)}
-            </div>
-            <span class="rating-text" id="rating-text-${productIdCounter}" style="color: green;">${rating.toFixed(1)}/5 ${getRatingEmoji(rating)}</span>
-        </div>
-        <div class="buy-section">
-            <span class="times-bought">0 times bought</span>
-            <button class="buy-button" onclick="buyProduct(${productIdCounter})">Buy</button>
-        </div>
+const cartToggle = document.getElementById('cartToggle');
+const cartDropdown = document.getElementById('cartDropdown');
+const cartClose = document.getElementById('cartClose');
+const cartItemsContainer = document.getElementById('cartItems');
+const cartCountEl = document.getElementById('cartCount');
+const cartTotalEl = document.getElementById('cartTotal');
+const checkoutBtn = document.getElementById('checkoutBtn');
+
+const addButtons = document.querySelectorAll('.add-to-cart');
+const toastsContainer = document.getElementById('toasts');
+const productCards = document.querySelectorAll('.card');
+
+let cart = {}; // { id: { id, name, price, img, qty } }
+let cartCount = 0;
+
+// ========== SIDEBAR HANDLERS ==========
+menuBtn.addEventListener('click', () => {
+  sidebar.style.left = '0px';
+  overlay.classList.add('show');
+});
+closeSidebar.addEventListener('click', () => closeMenu());
+overlay.addEventListener('click', () => closeMenu());
+function closeMenu() {
+  sidebar.style.left = '-320px';
+  overlay.classList.remove('show');
+}
+
+// smooth-close after clicking sidebar link
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => closeMenu());
+});
+
+// ========== ADD TO CART ==========
+addButtons.forEach(btn =>
+  btn.addEventListener('click', (e) => {
+    const card = e.target.closest('.product');
+    const id = card.dataset.id;
+    const name = card.dataset.name;
+    const price = parseFloat(card.dataset.price);
+    const img = card.dataset.img;
+
+    addToCart({ id, name, price, img });
+  })
+);
+
+function addToCart(item) {
+  if (!cart[item.id]) {
+    cart[item.id] = { ...item, qty: 1 };
+  } else {
+    cart[item.id].qty += 1;
+  }
+  cartCount += 1;
+  updateCartUI();
+  showToast(item.name);
+}
+
+// ========== CART UI RENDER ==========
+function updateCartUI() {
+  // ✅ Remember open state before re-rendering
+  const wasOpen = cartDropdown.classList.contains('open');
+
+  // update count
+  cartCountEl.textContent = cartCount;
+
+  // render items
+  const ids = Object.keys(cart);
+  if (ids.length === 0) {
+    cartItemsContainer.innerHTML = `<div class="empty">Your cart is empty</div>`;
+    cartTotalEl.textContent = `$0.00`;
+    checkoutBtn.disabled = true;
+    return;
+  }
+
+  checkoutBtn.disabled = false;
+  cartItemsContainer.innerHTML = '';
+  let total = 0;
+
+  ids.forEach(id => {
+    const it = cart[id];
+    total += it.price * it.qty;
+
+    const itemEl = document.createElement('div');
+    itemEl.className = 'cart-item';
+    itemEl.dataset.id = id;
+    itemEl.innerHTML = `
+      <img src="${it.img}" alt="${escapeHtml(it.name)}"/>
+      <div class="ci-info">
+        <div class="ci-name">${escapeHtml(it.name)}</div>
+        <div class="ci-price">$${(it.price).toFixed(2)}</div>
+      </div>
+      <div class="ci-controls">
+        <button class="qty-btn minus">−</button>
+        <div class="qty-num">${it.qty}</div>
+        <button class="qty-btn plus">+</button>
+      </div>
     `;
+    cartItemsContainer.appendChild(itemEl);
 
-    const section = document.getElementById(category.toLowerCase());
-    section.querySelector(".products").appendChild(productDiv);
+    // wire up plus/minus
+    itemEl.querySelector('.plus').addEventListener('click', () => {
+      cart[id].qty += 1;
+      cartCount += 1;
+      updateCartUI();
+    });
+    itemEl.querySelector('.minus').addEventListener('click', () => {
+      cart[id].qty -= 1;
+      cartCount -= 1;
+      if (cart[id].qty <= 0) delete cart[id];
+      updateCartUI();
+    });
+  });
 
-    const productImage = productDiv.querySelector(".product-image");
-    productImage.style.maxWidth = "100%";
-    productImage.style.maxHeight = "100%";
-    productImage.style.width = "auto";
-    productImage.style.height = "auto";
-    productImage.style.objectFit = "contain";
+  cartTotalEl.textContent = `$${total.toFixed(2)}`;
 
-    productIdCounter++;
+  // ✅ Restore open state if it was open before update
+  if (wasOpen) {
+    cartDropdown.classList.add('open');
+    cartDropdown.setAttribute('aria-hidden', 'false');
+    cartToggle.setAttribute('aria-expanded', 'true');
+  }
 }
 
-function generateStars(rating, productId) {
-    let starsHTML = "";
-    
-    for (let i = 0; i < 5; i++) {
-        if (i < rating) {
-            starsHTML += `<img class="star-icon" src="stars/star.png" alt="star" onclick="changeRating(${productId}, ${i + 1})">`;
-        } else {
-            starsHTML += `<img class="star-icon" src="stars/empty-star.png" alt="empty star" onclick="changeRating(${productId}, ${i + 1})">`;
-        }
+// helper to avoid XSS in product names inserted as HTML
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, s =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s])
+  );
+}
+
+// ========== CART DROPDOWN TOGGLE ==========
+cartToggle.addEventListener('click', (e) => {
+  const open = cartDropdown.classList.toggle('open');
+  cartDropdown.setAttribute('aria-hidden', String(!open));
+  cartToggle.setAttribute('aria-expanded', String(open));
+});
+
+// close button inside dropdown
+cartClose.addEventListener('click', () => {
+  cartDropdown.classList.remove('open');
+  cartDropdown.setAttribute('aria-hidden', 'true');
+  cartToggle.setAttribute('aria-expanded', 'false');
+});
+
+// ✅ Bulletproof: Keep cart open when interacting inside
+document.addEventListener('click', (e) => {
+  const clickedInsideCart = cartDropdown.contains(e.target);
+  const clickedCartToggle = cartToggle.contains(e.target);
+  if (!clickedInsideCart && !clickedCartToggle) {
+    cartDropdown.classList.remove('open');
+    cartDropdown.setAttribute('aria-hidden', 'true');
+    cartToggle.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// ========== TOASTS ==========
+function showToast(productName) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `✅ <strong>${escapeHtml(productName)}</strong> added to cart`;
+  toastsContainer.appendChild(toast);
+
+  // Animation in
+  toast.style.transform = 'translateX(0)';
+  toast.style.opacity = '1';
+
+  // Animation out
+  setTimeout(() => {
+    toast.style.transition = 'transform .35s, opacity .35s';
+    toast.style.transform = 'translateX(24px)';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 380);
+  }, 2600);
+}
+
+// ========== SEARCH FILTER ==========
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', () => {
+  const term = searchInput.value.toLowerCase();
+  document.querySelectorAll('.product').forEach(p => {
+    const name = p.dataset.name.toLowerCase();
+    p.style.display = name.includes(term) ? '' : 'none';
+  });
+});
+
+// ========== IN-VIEW ANIMATION for cards ==========
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('inview');
+      observer.unobserve(entry.target);
     }
-    return starsHTML;
-}
+  });
+}, { threshold: 0.12 });
 
-function changeRating(productId, newRating) {
-    const ratingDiv = document.getElementById(`rating-${productId}`);
-    const ratingText = document.getElementById(`rating-text-${productId}`);
-    
-    ratingDiv.innerHTML = generateStars(newRating, productId);
-    ratingText.textContent = `${newRating.toFixed(1)}/5 ${getRatingEmoji(newRating)}`;
-    updateRatingAppearance(newRating, ratingText);
-}
+productCards.forEach(card => observer.observe(card));
 
-function getRatingEmoji(rating) {
-    if (rating <= 2) {
-        return "😢";
-    } else if (rating === 3) {
-        return "😐";
-    } else if (rating >= 4) {
-        return "😄";
-    }
-}
-
-function updateRatingAppearance(rating, ratingText) {
-    if (rating <= 2) {
-        ratingText.style.color = "red";
-    } else if (rating === 3) {
-        ratingText.style.color = "orange";
-    } else if (rating >= 4) {
-        ratingText.style.color = "green";
-    }
-}
-
-function buyProduct(productId) {
-    const productDiv = document.getElementById(`product-${productId}`);
-    const boughtCounter = productDiv.querySelector(".times-bought");
-    let timesBought = parseInt(boughtCounter.textContent);
-    timesBought++;
-    boughtCounter.textContent = `${timesBought} times bought`;
-}
-
-addProduct("Smartphone", "Electronics", 5000, 5, "images/smartphone.jpg");
-addProduct("Laptop", "Electronics", 12000, 5, "images/laptop.jpg");
-addProduct("Headphones", "Electronics", 300, 5, "images/headphones.jpg");
-addProduct("PS5", "Electronics", 30000, 5, "images/PS5.jpg");
-addProduct("TV", "Electronics", 11000, 5, "images/TV.jpg");
-addProduct("SmartWatch", "Electronics", 7799, 5, "images/SmartWatch.jpg");
-
-addProduct("T-Shirt", "Clothing", 150, 5, "images/tshirt.jpg");
-addProduct("Jeans", "Clothing", 300, 5, "images/jeans.jpg");
-addProduct("Hoodie", "Clothing", 700, 5, "images/hoodie.jpg");
-addProduct("Sneakers", "Clothing", 500, 5, "images/sneakers.jpg");
-addProduct("Short", "Clothing", 490, 5, "images/Short.jpg");
-addProduct("Jacket", "Clothing", 450, 5, "images/Jacket.jpg");
-
-addProduct("Python Crash Course", "Books", 250, 5, "images/python_book.jpg");
-addProduct("To Kill a Mockingbird", "Books", 150, 5, "images/mockingbird.jpg");
-addProduct("The Great Gatsby", "Books", 200, 5, "images/gatsby.jpg");
-addProduct("Diary of a Wimpy kid", "Books", 400, 5, "images/Wimpy.jpg");
-addProduct("Peter Pan", "Books", 450, 5, "images/Peter.jpg");
-addProduct("William Shakespeare Tragedies", "Books", 1000, 5, "images/Tragedies.jpg");
+// ========== INIT ==========
+updateCartUI();

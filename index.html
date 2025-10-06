@@ -1,43 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Davazon</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Davazon — Deals of the Day</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header>
-        <h1>Davazon</h1>
-        <nav>
-            <ul>
-                <li><a href="#electronics">Electronics</a></li>
-                <li><a href="#clothing">Clothing & Accessories</a></li>
-                <li><a href="#books">Books</a></li>
-            </ul>
-        </nav>
-    </header>
+  <!-- NAVBAR -->
+  <header class="navbar" id="top">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
 
-    <div class="container">
-        <section id="electronics">
-            <h2>Electronics</h2>
-            <div class="products">
-            </div>
-        </section>
-
-        <section id="clothing">
-            <h2>Clothing & Accessories</h2>
-            <div class="products">
-            </div>
-        </section>
-
-        <section id="books">
-            <h2>Books</h2>
-            <div class="products">
-            </div>
-        </section>
+    <div class="brand">
+      <span class="logo">Davazon</span>
+      <span class="tag">— your online store</span>
     </div>
 
-    <script src="script.js"></script>
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search products, brands and more..." />
+      <button id="searchBtn" aria-label="Search">Search</button>
+    </div>
+
+    <div class="cart-wrapper">
+      <button id="cartToggle" class="cart" aria-expanded="false">🛒 <span id="cartCount">0</span></button>
+
+      <!-- CART DROPDOWN -->
+      <div id="cartDropdown" class="cart-dropdown" aria-hidden="true">
+        <div class="cart-header">
+          <strong>Your Cart</strong>
+          <button id="cartClose" class="mini-close" aria-label="Close">✕</button>
+        </div>
+        <div id="cartItems" class="cart-items">
+          <!-- items injected here -->
+          <div class="empty">Your cart is empty</div>
+        </div>
+        <div class="cart-footer">
+          <div class="cart-total">Total: <span id="cartTotal">$0.00</span></div>
+          <div>
+            <button id="checkoutBtn" class="primary" disabled>Checkout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR (drawer) -->
+  <aside id="sidebar" class="sidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">Davazon</div>
+      <button class="close-btn" id="closeSidebar" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav>
+      <ul class="sidebar-list">
+        <li><a href="#electronics" class="nav-link">📱 Electronics</a></li>
+        <li><a href="#clothes" class="nav-link">👕 Clothes</a></li>
+        <li><a href="#books" class="nav-link">📚 Books</a></li>
+        <li><a href="#top" class="nav-link">⬆️ Back to top</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">© 2025 Davazon — David Samy</div>
+  </aside>
+
+  <!-- OVERLAY when sidebar open -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- HERO / BANNER -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>🔥 Today's Deals — Handpicked for You</h1>
+      <p>Fast delivery • Trusted sellers • Student-friendly prices</p>
+      <a class="cta" href="#electronics">Shop Deals</a>
+    </div>
+  </section>
+
+  <!-- ELECTRONICS -->
+  <section id="electronics" class="section category-section">
+    <div class="section-header"><h2>Electronics</h2></div>
+    <div class="product-grid">
+      <article class="product card" data-id="laptop" data-name="Laptop" data-price="799.99" data-img="images/laptop.jpg">
+        <img src="images/laptop.jpg" alt="Laptop" />
+        <h3>Laptop</h3>
+        <p class="price">$799.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="smartphone" data-name="Smartphone" data-price="499.99" data-img="images/smartphone.jpg">
+        <img src="images/smartphone.jpg" alt="Smartphone" />
+        <h3>Smartphone</h3>
+        <p class="price">$499.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="tv" data-name="Smart TV" data-price="399.99" data-img="images/tv.jpg">
+        <img src="images/tv.jpg" alt="Smart TV" />
+        <h3>Smart TV</h3>
+        <p class="price">$399.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="smartwatch" data-name="Smartwatch" data-price="199.99" data-img="images/smartwatch.jpg">
+        <img src="images/smartwatch.jpg" alt="Smartwatch" />
+        <h3>Smartwatch</h3>
+        <p class="price">$199.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="headphones" data-name="Wireless Headphones" data-price="79.99" data-img="images/headphones.jpg">
+        <img src="images/headphones.jpg" alt="Wireless Headphones" />
+        <h3>Wireless Headphones</h3>
+        <p class="price">$79.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="ps5" data-name="PlayStation 5" data-price="499.99" data-img="images/ps5.jpg">
+        <img src="images/ps5.jpg" alt="PlayStation 5" />
+        <h3>PlayStation 5</h3>
+        <p class="price">$499.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+    </div>
+  </section>
+
+  <div class="divider diagonal" aria-hidden="true"></div>
+
+  <!-- CLOTHES -->
+  <section id="clothes" class="section category-section">
+    <div class="section-header"><h2>Clothes</h2></div>
+    <div class="product-grid">
+      <article class="product card" data-id="hoodie" data-name="Hoodie" data-price="39.99" data-img="images/hoodie.jpg">
+        <img src="images/hoodie.jpg" alt="Hoodie" />
+        <h3>Hoodie</h3>
+        <p class="price">$39.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="tshirt" data-name="T-Shirt" data-price="19.99" data-img="images/tshirt.jpg">
+        <img src="images/tshirt.jpg" alt="T-Shirt" />
+        <h3>T-Shirt</h3>
+        <p class="price">$19.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="jeans" data-name="Jeans" data-price="49.99" data-img="images/jeans.jpg">
+        <img src="images/jeans.jpg" alt="Jeans" />
+        <h3>Jeans</h3>
+        <p class="price">$49.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="shorts" data-name="Shorts" data-price="24.99" data-img="images/short.jpg">
+        <img src="images/short.jpg" alt="Shorts" />
+        <h3>Shorts</h3>
+        <p class="price">$24.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="jacket" data-name="Jacket" data-price="59.99" data-img="images/jacket.jpg">
+        <img src="images/jacket.jpg" alt="Jacket" />
+        <h3>Jacket</h3>
+        <p class="price">$59.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+    </div>
+  </section>
+
+  <div class="divider diagonal" aria-hidden="true"></div>
+
+  <!-- BOOKS -->
+  <section id="books" class="section category-section">
+    <div class="section-header"><h2>Books</h2></div>
+    <div class="product-grid">
+      <article class="product card" data-id="gatsby" data-name="The Great Gatsby" data-price="9.99" data-img="images/gatsby.jpg">
+        <img src="images/gatsby.jpg" alt="The Great Gatsby" />
+        <h3>The Great Gatsby</h3>
+        <p class="price">$9.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="peter" data-name="Peter Pan" data-price="7.99" data-img="images/peter.jpg">
+        <img src="images/peter.jpg" alt="Peter Pan" />
+        <h3>Peter Pan</h3>
+        <p class="price">$7.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="mockingbird" data-name="To Kill a Mockingbird" data-price="8.99" data-img="images/mockingbird.jpg">
+        <img src="images/mockingbird.jpg" alt="To Kill a Mockingbird" />
+        <h3>To Kill a Mockingbird</h3>
+        <p class="price">$8.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="tragedies" data-name="Shakespeare's Tragedies" data-price="11.99" data-img="images/tragedies.jpg">
+        <img src="images/tragedies.jpg" alt="Shakespeare's Tragedies" />
+        <h3>Shakespeare's Tragedies</h3>
+        <p class="price">$11.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="python_book" data-name="Learn Python" data-price="12.99" data-img="images/python_book.jpg">
+        <img src="images/python_book.jpg" alt="Learn Python" />
+        <h3>Learn Python</h3>
+        <p class="price">$12.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+
+      <article class="product card" data-id="wimpy" data-name="Diary of a Wimpy Kid" data-price="6.99" data-img="images/wimpy.jpg">
+        <img src="images/wimpy.jpg" alt="Diary of a Wimpy Kid" />
+        <h3>Diary of a Wimpy Kid</h3>
+        <p class="price">$6.99</p>
+        <button class="add-to-cart">Add to Cart</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- TOASTS container -->
+  <div id="toasts" class="toasts"></div>
+
+  <!-- POPUP -->
+  <div id="popup" class="popup" aria-hidden="true"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div>© 2025 Davazon • Built by David Samy</div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
